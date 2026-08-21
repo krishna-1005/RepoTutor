@@ -40,13 +40,15 @@ function saveState(statePartial: Partial<AppState>) {
 const saved = loadSavedState() || {};
 const initialPreset = PRESET_REPOSITORIES.find(r => r.id === (saved.activeRepoId || 'auth-flow')) || PRESET_REPOSITORIES[0];
 
+const initialApiKey = saved.apiKey || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+
 export const useAppStore = create<AppState>((set, get) => {
-  if (saved.apiKey) {
-    geminiService.setApiKey(saved.apiKey);
+  if (initialApiKey) {
+    geminiService.setApiKey(initialApiKey);
   }
 
   return {
-    apiKey: saved.apiKey || '',
+    apiKey: initialApiKey,
     activeRepoId: initialPreset.id,
     graphData: initialPreset.graph,
     activeNodeId: initialPreset.graph.nodes[0]?.id || null,
